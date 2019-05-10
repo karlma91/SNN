@@ -18,6 +18,7 @@ PVector trans = new PVector();
 JSONObject json;
 PVector global = new PVector();
 PVector local = new PVector();
+PVector plocal = new PVector();
 
 boolean[] keys = new boolean[255];
 
@@ -43,16 +44,18 @@ void draw() {
   cc.draw();
   pushMatrix();
   coordinateSystem.reset();
-  coordinateSystem.translate(width/2,height/2);
-  coordinateSystem.translate(trans.x,trans.y);
+  coordinateSystem.translate(width/2, height/2);
+  coordinateSystem.translate(trans.x, trans.y);
   coordinateSystem.scale(scale);
   inverse = coordinateSystem.get();
   inverse.invert();
-   //set global coordinates
-  global.set(mouseX,mouseY);
+  //set global coordinates
+  global.set(mouseX, mouseY);
   //compute local coordinates by multiplying the global coordinates to the inverse local coordinate system (transformation matrix)
-  inverse.mult(global,local);
-  
+  inverse.mult(global, local);
+  global.set(pmouseX, pmouseY);
+  inverse.mult(global, plocal);
+
   setMatrix(coordinateSystem);
   //scale(scale);
   for (Neuron n : neurons) {
@@ -95,6 +98,9 @@ void mouseDragged() {
   if (selectedN != null) { 
     selectedN.pos.x = local.x;
     selectedN.pos.y = local.y;
+  } else {
+    trans.x+=mouseX-pmouseX;
+    trans.y+=mouseY-pmouseY;
   }
 }
 void mousePressed() {
@@ -102,7 +108,6 @@ void mousePressed() {
   for (Neuron n : neurons) {
     if (n.mouseOver) {
       toBe = n;
-      toBe.selected = true;
       break;
     }
   }
@@ -114,12 +119,24 @@ void mousePressed() {
         toBe.selected = false;
         selectedN= null;
       } else {
-        selectedN.selected = false;
-        selectedN = toBe;
+        if (toBe == selectedN) { 
+          selectedN.selected = false;
+          selectedN = null;
+        } else {
+          selectedN.selected = false;
+          selectedN = toBe;
+          toBe.selected = true;
+        }
       }
     } else {
       selectedN = toBe;
+      selectedN.selected = true;
     }
+  } else {
+    //if (selectedN != null) {
+    //  selectedN.selected = false;
+    //  selectedN = null;
+    //}
   }
 }
 
@@ -181,8 +198,8 @@ void loadFile(String filename) {
 
 void keyPressed()
 {
-  keys[key]= true; 
+  keys[key]= true;
 }
-void keyReleased(){
+void keyReleased() {
   keys[key]= false;
 }
