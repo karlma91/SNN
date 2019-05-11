@@ -52,7 +52,7 @@ class Neuron
 
     circle(pos.x, pos.y, radius*2);
     for (Neuron n : axon) {
-      drawArrow(pos.x, pos.y, n.pos.x, n.pos.y);
+      drawArrow(this, n);
     }
     textSize(16);
     fill(255);
@@ -75,14 +75,20 @@ class Neuron
     Vm *= Rm;
   }
 
-  void drawArrow(float x1, float y1, float x2, float y2) {
-    float a = 3;
-    pushMatrix();
-    translate(x2, y2);
-    rotate(atan2(y2 - y1, x2 - x1));
-    triangle(- a * 2-radius, - a, -radius, 0, - a * 2-radius, a);
-    popMatrix();
-    line(x1, y1, x2, y2);
+  //void drawArrow(float x1, float y1, float x2, float y2) {
+  void drawArrow(Neuron fromNeuron, Neuron toNeuron) {
+    float arrowHeadSize = 3;
+    push();
+    translate(toNeuron.pos.x, toNeuron.pos.y);
+    rotate(atan2(toNeuron.pos.y - fromNeuron.pos.y, toNeuron.pos.x - fromNeuron.pos.x));
+    triangle(-arrowHeadSize*2 - radius, -arrowHeadSize, -radius, 0, -arrowHeadSize*2 - radius, arrowHeadSize);
+    pop();
+
+    //PVector arrowVector(fromNeuron.pos.x - toNeuron.pos.x - radius, fromNeuron.pos.y - toNeuron.pos.y - radius);
+    
+    PVector lineStart = new PVector(fromNeuron.pos.x, fromNeuron.pos.y);
+    PVector lineEnd = new PVector(toNeuron.pos.x, toNeuron.pos.y);
+    line(lineStart.x, lineStart.y, lineEnd.x, lineEnd.y);
   }
 
   boolean overCircle(PVector pos, int diameter) {

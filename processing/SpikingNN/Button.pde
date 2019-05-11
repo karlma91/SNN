@@ -1,4 +1,3 @@
-
 class Button
 {
   int x, y;
@@ -7,7 +6,10 @@ class Button
   color rectColor, baseColor;
   color rectHighlight;
   color currentColor;
+  color activeColor;
+  
   boolean rectOver = false;
+  boolean activeAction = false;
 
   String text;
 
@@ -17,14 +19,17 @@ class Button
     this.text = text;
     this.rectW=w;
     this.rectH=h;
-    this.rectColor = color(14);
+    this.rectColor = color(150);
     this.rectHighlight = color(255);
+    this.activeColor = color(255,0,0);
   }
 
   void draw_button()
   {
     if (rectOver) {
       fill(rectHighlight);
+    } else if (activeAction) {
+      fill(activeColor);
     } else {
       fill(rectColor);
     }
@@ -36,8 +41,8 @@ class Button
     text(this.text, x + 10, y + (rectH/2 + fontSize/4) );
   }
 
-  void update_button(int cx, int cy) {
-    if ( overRect(cx+x, cy+y, rectW, rectH) ) {
+  void update_button(int container_x_pos, int container_y_pos) {
+    if ( overRect(container_x_pos + x, container_y_pos + y, rectW, rectH) ) {
       rectOver = true;
     } else {
       rectOver = false;
