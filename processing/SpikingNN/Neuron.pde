@@ -56,7 +56,7 @@ class Neuron
     }
     textSize(16);
     fill(255);
-    text(Vm+"", pos.x-10, pos.y+24);
+    text((int)Vm+"", pos.x-10, pos.y+24);
   }
 
   void update() {
@@ -67,7 +67,7 @@ class Neuron
     }
     int now = millis();
     int delta = now-lastFire;
-    if (Vm > Vth && delta>100 && (now-gotInput)>100) {
+    if (Vm > Vth && delta>50 && (now-gotInput)>10) {
       fire();
       Vm = 0;
       lastFire = now;
